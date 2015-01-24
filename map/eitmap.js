@@ -308,3 +308,16 @@ info.updateQuickClay = function (properties) {
 };
 
 info.addTo(map);
+
+// Attempting new control-thingy
+var maxer = L.control({position: "bottomleft"});
+
+L.easyButton('fa-comment',
+		function () {
+			var mapDiv = L.DomUtil.get("map");
+			mapDiv.style.height = "98vh";
+			mapDiv.style.width = "98vw";
+			console.log(mapDiv.style.height);
+		},
+		''
+);
