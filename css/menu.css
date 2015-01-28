@@ -1,81 +1,95 @@
-/*****************/
-/*      MENU     */
-/*****************/
-#menu {
+.navigation {
+    width: 100%;
+    height: 100%;
     position: fixed;
-    z-index: 10000;
-    margin-top: 10px;
     top: 0;
+    right: 0;
+    bottom: 0;
     left: 0;
-}
-
-ul {
-    text-align: left;
-    display: inline;
-    margin: 0;
-    padding: 15px 4px 17px 0;
+    z-index: 0;
+    overflow: auto;
+    overflow-y: scroll;
     list-style: none;
+    background: #111;
 }
 
-ul li {
-    font: bold 12px/18px sans-serif;
-    display: inline-block;
-    margin-right: -4px;
-    margin-left: 10px;
-    position: relative;
-    padding: 15px 15px;
-    background: rgba(0, 0, 0, 0.3);
-    color: rgba(255, 255, 255, 0.8);
-    cursor: pointer;
+.nav-item {
+    width: 200px;
+    border-top: 1px solid #111;
+    border-bottom: 1px solid #000;
 }
 
-ul li:hover {
-  background: rgba(0, 0, 0, 0.4);
-  color: rgba(255, 255, 255, 1);
-}
-
-ul li ul {
-    padding: 0;
-    position: absolute;
-    top: 48px;
-    left: 0;
-    margin-left: -10px;
-    width: 140px;
-    display: none;
-    opacity: 0;
-    visibility: hidden;
-}
-
-ul li ul li { 
-    background: rgba(0, 0, 0, 0.4); 
-    display: block; 
-    color: rgba(255, 255, 255, 1);
-    padding: 10px 10px 10px 10px;
-}
-
-ul li ul li:hover { 
-    background: rgba(0, 0, 0, 0.7); 
-}
-
-ul li ul li a {
-    color: inherit;
-}
-
-ul li:hover ul {
+.nav-item a {
     display: block;
-    opacity: 0.9;
-    visibility: visible;
+    padding: 0.4em;
+    background: linear-gradient(135deg, rgba(0,0,0,0) 0%,rgba(0,0,0,0.65) 100%);
+    color: white;
+    font-size: 1.2em;
+    text-decoration: none;
+    /*transition: color 0.2s, background 0.5s;*/
 }
 
-ul li h1 {
-    font-size: 5em; 
+.nav-item a:hover {
+    color: #c74438;
+    background: linear-gradient(135deg, rgba(0,0,0,0) 0%,rgba(75,20,20,0.65) 100%);
 }
 
-.leaflet-buttons-control-img {
-    max-width: 100%;
-    max-height: 100%;   
+.site-wrap {
+    /* Critical position and size styles */
+    min-height: 100%;
+    min-width: 100%;
+    background-color: white; /* Needs a background or else the nav will show through */
+    position: relative;
+    top: 0;
+    bottom: 100%;
+    left: 0;
+    z-index: 1;
 }
 
 
+/* Nav Trigger */
+.nav-trigger {
+    /* critical styles - hide the checkbox input */
+    position: fixed;
+    clip: rect(0, 0, 0, 0);
+}
+
+label[for="nav-trigger"] {
+    /* critical positioning styles */
+    position: fixed;
+    left: 15px; top: 15px;
+    z-index: 2;
+
+    /* non-critical apperance styles */
+    height: 30px;
+    width: 30px;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' version='1.1' x='0px' y='0px' width='30px' height='30px' viewBox='0 0 30 30' enable-background='new 0 0 30 30' xml:space='preserve'><rect width='30' height='6'/><rect y='24' width='30' height='6'/><rect y='12' width='30' height='6'/></svg>");
+    background-size: contain;
+}
+
+/* Make the Magic Happen */
+/*.nav-trigger + label, .site-wrap {
+    transition: left 0.2s;
+}*/
+
+.nav-trigger:checked + label {
+    left: 215px;
+}
+
+.nav-trigger:checked ~ .site-wrap {
+    left: 200px;
+    box-shadow: 0 0 5px 5px rgba(0,0,0,0.5);
+}
+
+body {
+	/* Without this, the body has excess horizontal scroll when the menu is open */
+  overflow-x: hidden;
+}
+
+
+/* Micro reset */
+*,*:before,*:after{-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;margin:0;padding:0;}
+html, body { height: 100%; width: 100%; font-family: Helvetica, Arial, sans-serif; }
 
 
