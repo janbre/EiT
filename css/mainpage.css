@@ -120,20 +120,20 @@ section.module.parallax-0 h2 {
 }
 
 section.module.parallax-0 {
-	background-image: url("img/brygge1-crop.jpg");
+	background-image: url("../img/brygge1-crop.jpg");
 	height: 800px;
 }
 
 section.module.parallax-1 {
-	background-image :url("img/brygge2.jpg");
+	background-image :url("../img/brygge2.jpg");
 }
 
 section.module.parallax-2 {
-	background-image: url("img/group-crop.jpg");
+	background-image: url("../img/group-crop.jpg");
 }
 
 section.module.parallax-3 {
-	background-image: url("img/3-1.jpg");
+	background-image: url("../img/3-1.jpg");
 }
 
 @media all and (min-width: 600px) {
