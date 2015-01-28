@@ -70,7 +70,6 @@ var historicLayer = L.geoJson(historic, {
 	onEachFeature: onEachFeature
 });
 
-/*
 var fireLayer = L.geoJson(fireareas, {
 	style: fireStyle,
 	filter: function (feature, layer) {
@@ -82,7 +81,7 @@ var fireLayer = L.geoJson(fireareas, {
 	},
 	onEachFeature: onEachFeature
 });
-*/
+
 var floodLayer = L.geoJson(floodareas, {
 	style: floodStyle,
 	filter: function (feature, layer) {
@@ -115,7 +114,7 @@ var imageLayer = null;
 var map = L.map("map", {
 	center: [63.43387, 10.41384],
 	zoom: 13,
-	layers: [mapLayer, historicLayer, quickClayLayer, floodLayer]
+	layers: [mapLayer, historicLayer, fireLayer, quickClayLayer, floodLayer]
 });
 
 map.scrollWheelZoom.disable();
@@ -129,6 +128,7 @@ var baseMaps = {
 // Can have multiple overlays and switch between them, let's add one for every category
 var overlayMaps = {
 	"Historic": historicLayer,
+	"Fire": fireLayer,
 	"Quick clay": quickClayLayer,
 	"500-year Flood": floodLayer
 };
@@ -174,7 +174,7 @@ function getHistoryPopup(feature) {
 		var fileType = ".jpg";
 		var fullImage = feature.properties.img + fileType;
 		var smallImage = feature.properties.img + "_small" + fileType;
-		popupContent += "<br><a href='../img/" + fullImage + "' target='_blank'><img src='../img/" + smallImage + "'/></a>";
+		popupContent += "<br><a href='img/" + fullImage + "' target='_blank'><img src='img/" + smallImage + "'/></a>";
 	}
 	if (feature.properties.source) {
 		popupContent += "<a href='" + feature.properties.source + "'>Source</a>";
@@ -317,11 +317,13 @@ var maxer = L.control({position: "bottomleft"});
 L.easyButton('fa-comment',
 		function () {
 			var mapDiv = L.DomUtil.get("map");
+			//mapDiv.style.height = "98vh";
+			//mapDiv.style.width = "98vw";
 			if (map.scrollWheelZoom.enabled()) {
-				map.scrollWheelZoom.disable();
-			} else {
-				map.scrollWheelZoom.enable();
-			}
+    			map.scrollWheelZoom.disable();
+    		} else {
+    		    map.scrollWheelZoom.enable();
+    		}
 		},
 		'Enable/disable scroll zoom'
 );
