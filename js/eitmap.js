@@ -47,6 +47,23 @@ var quickClayType = "KvikkleireFaresone";
 var historicType = "Historic";
 var markerType = "Marker";
 
+var FlameIcon = L.Icon.extend({
+    options: {
+        shadowUrl: "js/images/flame-shadow.png",
+        iconSize:       [26,41],
+        shadowSize:     [44,29],
+        iconAnchor:     [13,41],
+        shadowAnchor:   [13,29],
+        popupAnchor:    [-3, -35]
+    }
+});
+
+var whiteFlame = new FlameIcon({iconUrl: "js/images/flame-white.png"});
+var greenFlame = new FlameIcon({iconUrl: "js/images/flame-green.png"});
+var yellowFlame = new FlameIcon({iconUrl: "js/images/flame-yellow.png"});
+var redFlame = new FlameIcon({iconUrl: "js/images/flame-red.png"});
+    
+
 /*************************************/
 /**  Read GeoJSON and create layers **/
 /*************************************/
@@ -150,6 +167,7 @@ function onEachFeature(feature, layer) {
 		case fireType:
 			popupContent = getFirePopup(feature);
             layer.bindPopup(popupContent);
+            setCustomIcon(feature, layer);
 			break;
 		case floodType:
 			popupContent = getFloodPopup(feature);
@@ -221,6 +239,25 @@ function getFloodPopup(feature) {
 	return "FLOOD!";
 }
 
+function setCustomIcon(feature, layer) {
+    switch (feature.properties.risikoKl) {
+        case 0:
+            layer.setIcon(whiteFlame);
+            break;
+        case 1:
+            layer.setIcon(greenFlame);
+            break;
+        case 2:
+            layer.setIcon(yellowFlame);
+            break;
+        case 3:
+            layer.setIcon(redFlame);
+            break;
+        default:
+            layer.setIcon(whiteFlame);
+    }           
+}
+    
 
 /******************************************/
 /**		Info box and hover effect		 **/
