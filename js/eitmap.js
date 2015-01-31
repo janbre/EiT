@@ -58,11 +58,23 @@ var FlameIcon = L.Icon.extend({
     }
 });
 
+var HistoricIcon = L.Icon.extend({
+    options: {
+        shadowUrl:      "js/images/historic-shadow.png",
+        iconsize:       [25,35],
+        shadowSize:     [51,28],
+        iconAnchor:     [12,35],
+        shadowAnchor:   [12,30],
+        popupAnchor:    [-3, -35]
+    }
+});
+
 var whiteFlame = new FlameIcon({iconUrl: "js/images/flame-white.png"});
 var greenFlame = new FlameIcon({iconUrl: "js/images/flame-green.png"});
 var yellowFlame = new FlameIcon({iconUrl: "js/images/flame-yellow.png"});
 var redFlame = new FlameIcon({iconUrl: "js/images/flame-red.png"});
-    
+   
+var historicMarker = new HistoricIcon({iconUrl: "js/images/historic.png"}); 
 
 /*************************************/
 /**  Read GeoJSON and create layers **/
@@ -167,7 +179,7 @@ function onEachFeature(feature, layer) {
 		case fireType:
 			popupContent = getFirePopup(feature);
             layer.bindPopup(popupContent);
-            setCustomIcon(feature, layer);
+            setCustomFireIcon(feature, layer);
 			break;
 		case floodType:
 			popupContent = getFloodPopup(feature);
@@ -175,6 +187,7 @@ function onEachFeature(feature, layer) {
 		case historicType:
 			popupContent = getHistoryPopup(feature);
 			layer.bindPopup(popupContent);
+			layer.setIcon(historicMarker);
 			break;
 		default:
 			popupContent = "Unknown feature type";
@@ -239,7 +252,7 @@ function getFloodPopup(feature) {
 	return "FLOOD!";
 }
 
-function setCustomIcon(feature, layer) {
+function setCustomFireIcon(feature, layer) {
     switch (feature.properties.risikoKl) {
         case 0:
             layer.setIcon(whiteFlame);
