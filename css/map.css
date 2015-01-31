@@ -45,3 +45,8 @@ div.info p {
 	font-size: 14px;
 	font-weight: 300;
 }
+
+.leaflet-buttons-control-img {
+    max-width: 100%;
+    max-height: 100%;
+}

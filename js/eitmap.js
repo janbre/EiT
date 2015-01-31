@@ -70,9 +70,8 @@ var historicLayer = L.geoJson(historic, {
 	onEachFeature: onEachFeature
 });
 
-/*
+
 var fireLayer = L.geoJson(fireareas, {
-	style: fireStyle,
 	filter: function (feature, layer) {
 		if (feature.properties) {
 			// If the property "underConstruction" exists and is true, return false (don't render features under construction)
@@ -82,7 +81,7 @@ var fireLayer = L.geoJson(fireareas, {
 	},
 	onEachFeature: onEachFeature
 });
-*/
+
 var floodLayer = L.geoJson(floodareas, {
 	style: floodStyle,
 	filter: function (feature, layer) {
@@ -115,7 +114,7 @@ var imageLayer = null;
 var map = L.map("map", {
 	center: [63.43387, 10.41384],
 	zoom: 13,
-	layers: [mapLayer, historicLayer, quickClayLayer, floodLayer]
+	layers: [mapLayer, fireLayer, floodLayer, historicLayer, quickClayLayer]
 });
 
 map.scrollWheelZoom.disable();
@@ -128,6 +127,7 @@ var baseMaps = {
 
 // Can have multiple overlays and switch between them, let's add one for every category
 var overlayMaps = {
+    "Fire": fireLayer,
 	"Historic": historicLayer,
 	"Quick clay": quickClayLayer,
 	"500-year Flood": floodLayer
@@ -149,6 +149,7 @@ function onEachFeature(feature, layer) {
 			break;
 		case fireType:
 			popupContent = getFirePopup(feature);
+            layer.bindPopup(popupContent);
 			break;
 		case floodType:
 			popupContent = getFloodPopup(feature);
@@ -174,10 +175,10 @@ function getHistoryPopup(feature) {
 		var fileType = ".jpg";
 		var fullImage = feature.properties.img + fileType;
 		var smallImage = feature.properties.img + "_small" + fileType;
-		popupContent += "<br><a href='../img/" + fullImage + "' target='_blank'><img src='../img/" + smallImage + "'/></a>";
+		popupContent += "<br><a href='img/" + fullImage + "' target='_blank'><img src='img/" + smallImage + "'/></a>";
 	}
 	if (feature.properties.source) {
-		popupContent += "<a href='" + feature.properties.source + "'>Source</a>";
+		popupContent += "<a href='" + feature.properties.source + "' target='_blank'>Source</a>";
 	}
 	return popupContent;
 }
@@ -192,7 +193,27 @@ function getQuickClayPopup(feature) {
 
 function getFirePopup(feature) {
 	var popupContent = "";
-	return "FIRE!";
+	var riskLevel = "";
+	switch (feature.properties.risikoKl) {
+	    case 0:
+	        riskLevel = "Unknown";
+	        break;
+	    case 1:
+	        riskLevel = "Low";
+	        break;
+	    case 2:
+	        riskLevel = "Medium";
+	        break;
+	    case 3:
+	        riskLevel = "High";
+	        break;
+	    default:
+	        riskLevel = "Unknown";
+    }
+    popupContent = "<h3>" + feature.properties.title + "</h3>";
+    popupContent += "<p>" + feature.properties.popupContent + "</p>";
+    popupContent += "<p><i>Risk level: " + riskLevel + "</i></p>";
+	return popupContent;
 }
 
 function getFloodPopup(feature) {
@@ -208,8 +229,9 @@ function getFloodPopup(feature) {
 // Used to highlight features. Style defines is highlight style
 function highlightFeature(e) {
 	var layer = e.target;
+	var featureType = layer.feature.properties.objType;
 //	console.log(layer);
-	if (layer.feature.properties.objType !== markerType && layer.feature.properties.objType !== historicType) {
+	if (featureType !== markerType && featureType !== historicType && featureType !== fireType) {
 		layer.setStyle({
 			opacity: 1,
 			fillOpacity: 0.6
@@ -218,10 +240,6 @@ function highlightFeature(e) {
 			layer.bringToFront();
 		}
 	}
-	if (layer.feature.properties.ORIG_FID) {
-		console.log(layer.feature.properties.ORIG_FID);
-	}
-
 	info.update(e.target.feature.properties);
 }
 
