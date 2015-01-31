@@ -69,10 +69,10 @@ var redFlame = new FlameIcon({iconUrl: "js/images/flame-red.png"});
 /*************************************/
 
 var mapLink = "<a href='http://openstreetmap.org'>OpenStreetMap contributors</a>";
-var mapquestLink = "<a href='http://www.mapquest.com//'>MapQuest</a>";
+var mapquestLink = "<a href='http://www.mapquest.com/' target='_blank'>MapQuest</a>";
 var mapquestPic = "<img src='http://developer.mapquest.com/content/osm/mq_logo.png'>";
 var mapLayer = L.tileLayer("http://{s}.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png", {
-		attribution: "&copy; " + mapLink + ". Tiles courtesy of "+mapquestLink + " " + mapquestPic,
+		attribution: "&copy; " + mapLink + ". Tiles courtesy of "+mapquestLink + " - " + mapquestPic,
 		subdomains: ["otile1", "otile2", "otile3", "otile4"]
 });
 
