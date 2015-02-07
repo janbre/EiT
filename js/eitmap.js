@@ -1,5 +1,5 @@
-// TODO: 
-//// Institution layer: 22B, Frelsesarmeen, Vår Frue kirke, Kirkens Bymisjon, Omsorgskafeen, Sorgenfri
+// TODO:
+//// Institution layer: Omsorgskafeen, Sorgenfri
 /*************************************/
 /*		Styling for polygons		 */
 /*************************************/
@@ -25,6 +25,13 @@ var floodStyle = {
 	"fillOpacity": 0.3
 };
 
+var dambreakStyle = {
+	"color": "#38bcf1",
+	"weight": 1,
+	"opactiy": 1,
+	"fillOpacity": 0.4
+};
+
 var levels = {
 	quickClayLevels: [
 		"#00FF66",
@@ -46,6 +53,7 @@ var floodType = "FlomAreal";
 var quickClayType = "KvikkleireFaresone";
 var historicType = "Historic";
 var markerType = "Marker";
+var dambreakType = "Dambreak";
 
 var FlameIcon = L.Icon.extend({
     options: {
@@ -73,8 +81,7 @@ var whiteFlame = new FlameIcon({iconUrl: "js/images/flame-white.png"});
 var greenFlame = new FlameIcon({iconUrl: "js/images/flame-green.png"});
 var yellowFlame = new FlameIcon({iconUrl: "js/images/flame-yellow.png"});
 var redFlame = new FlameIcon({iconUrl: "js/images/flame-red.png"});
-   
-var historicMarker = new HistoricIcon({iconUrl: "js/images/historic.png"}); 
+var historicMarker = new HistoricIcon({iconUrl: "js/images/historic.png"});
 
 /*************************************/
 /**  Read GeoJSON and create layers **/
@@ -122,7 +129,16 @@ var floodLayer = L.geoJson(floodareas, {
 	onEachFeature: onEachFeature
 });
 
-var damBreakLayer = null;
+var dambreakLayer = L.geoJson(dambreaks, {
+    style: dambreakStyle,
+    filter: function (feature, layer) {
+        if (feature.properties) {
+            return feature.properties.underConstruction !== undefined ? !feature.properties.underConstruction : true;
+        }
+        return false;
+    },
+    onEachFeature: onEachFeature
+});
 
 var quickClayLayer = L.geoJson(quickClayAreas, {
 	style: quickClayStyle,
@@ -136,14 +152,16 @@ var quickClayLayer = L.geoJson(quickClayAreas, {
 });
 
 
-var imageLayer = null;
+var markerLayer = L.geoJson(markers, {
+    onEachFeature: onEachFeature
+});
 
 
 /// Create the map, center it on Trondheim and set zoom to 15 before adding layers
 var map = L.map("map", {
 	center: [63.43387, 10.41384],
 	zoom: 13,
-	layers: [mapLayer, fireLayer, floodLayer, historicLayer, quickClayLayer]
+	layers: [mapLayer, fireLayer, floodLayer, historicLayer, quickClayLayer, markerLayer, dambreakLayer]
 });
 
 map.scrollWheelZoom.disable();
@@ -156,16 +174,18 @@ var baseMaps = {
 
 // Can have multiple overlays and switch between them, let's add one for every category
 var overlayMaps = {
-    "Fire": fireLayer,
-	"Historic": historicLayer,
-	"Quick clay": quickClayLayer,
-	"500-year Flood": floodLayer
+    "Fire risk areas": fireLayer,
+	"Historic events": historicLayer,
+	"Quick clay risk areas": quickClayLayer,
+	"500-year Flood": floodLayer,
+    "Social institutions": markerLayer,
+    "Dam break zone": dambreakLayer
 };
 
 // Add layer switching controls to the map
 L.control.layers(baseMaps, overlayMaps).addTo(map);
 
-// Functions
+// Check feature type and add colors, markers etc to layer
 function onEachFeature(feature, layer) {
 	var popUpContent = "";
 	var img = "";
@@ -179,7 +199,7 @@ function onEachFeature(feature, layer) {
 		case fireType:
 			popupContent = getFirePopup(feature);
             layer.bindPopup(popupContent);
-            setCustomFireIcon(feature, layer);
+			layer.setIcon(getCustomFireIcon(feature, layer));
 			break;
 		case floodType:
 			popupContent = getFloodPopup(feature);
@@ -189,6 +209,14 @@ function onEachFeature(feature, layer) {
 			layer.bindPopup(popupContent);
 			layer.setIcon(historicMarker);
 			break;
+		case dambreakType:
+			popupContent = getDambreakPopup(feature);
+			layer.bindPopup(popupContent);
+			break;
+		case markerType:
+			popupContent = getMarkerPopup(feature);
+			layer.bindPopup(popupContent);
+			layer
 		default:
 			popupContent = "Unknown feature type";
 	}
@@ -196,6 +224,53 @@ function onEachFeature(feature, layer) {
 		mouseover: highlightFeature,
 		mouseout: resetHighlight
 	});
+}
+
+function getCustomFireIcon(feature, layer) {
+    switch (feature.properties.risikoKl) {
+        case 0:
+            return whiteFlame;
+        case 1:
+            return greenFlame;
+        case 2:
+            return yellowFlame;
+        case 3:
+            return redFlame;
+        default:
+            return whiteFlame;
+    }
+}
+
+function getDambreakPopup(feature) {
+	var popupContent = "";
+	popupContent = "<h3>" + feature.properties.title + "</h3>";
+	popupContent += "<p>" + feature.properties.popupContent + "</p>";
+	return popupContent;
+}
+
+function getFirePopup(feature) {
+	var popupContent = "";
+	var riskLevel = "";
+	switch (feature.properties.risikoKl) {
+		case 0:
+			riskLevel = "Unknown";
+			break;
+		case 1:
+			riskLevel = "Low";
+			break;
+		case 2:
+			riskLevel = "Medium";
+			break;
+		case 3:
+			riskLevel = "High";
+			break;
+		default:
+			riskLevel = "Unknown";
+    }
+    popupContent = "<h3>" + feature.properties.title + "</h3>";
+    popupContent += "<p>" + feature.properties.popupContent + "</p>";
+    popupContent += "<p><i>Risk level: " + riskLevel + "</i></p>";
+	return popupContent;
 }
 
 function getHistoryPopup(feature) {
@@ -214,73 +289,37 @@ function getHistoryPopup(feature) {
 	return popupContent;
 }
 
+function getMarkerPopup(feature) {
+	var popupContent = "";
+	popupContent = "<h3>" + feature.properties.title + "</h3>";
+	popupContent += "<p>" + feature.properties.popupContent + "</p>";
+	return popupContent;
+}
 
 function getQuickClayPopup(feature) {
 	var popupContent = "";
-
 	popupContent = "<a href='http://gis3.nve.no/nvedatanedlast/Default.aspx'>Source</a>";
 	return popupContent;
 }
 
-function getFirePopup(feature) {
-	var popupContent = "";
-	var riskLevel = "";
-	switch (feature.properties.risikoKl) {
-	    case 0:
-	        riskLevel = "Unknown";
-	        break;
-	    case 1:
-	        riskLevel = "Low";
-	        break;
-	    case 2:
-	        riskLevel = "Medium";
-	        break;
-	    case 3:
-	        riskLevel = "High";
-	        break;
-	    default:
-	        riskLevel = "Unknown";
-    }
-    popupContent = "<h3>" + feature.properties.title + "</h3>";
-    popupContent += "<p>" + feature.properties.popupContent + "</p>";
-    popupContent += "<p><i>Risk level: " + riskLevel + "</i></p>";
-	return popupContent;
-}
 
 function getFloodPopup(feature) {
 	var popupContent = "";
 	return "FLOOD!";
 }
 
-function setCustomFireIcon(feature, layer) {
-    switch (feature.properties.risikoKl) {
-        case 0:
-            layer.setIcon(whiteFlame);
-            break;
-        case 1:
-            layer.setIcon(greenFlame);
-            break;
-        case 2:
-            layer.setIcon(yellowFlame);
-            break;
-        case 3:
-            layer.setIcon(redFlame);
-            break;
-        default:
-            layer.setIcon(whiteFlame);
-    }           
-}
-    
 
-/******************************************/
-/**		Info box and hover effect		 **/
-/******************************************/
+
+
+//////////////////////////////////////////////
+//		Helper functions for coloring		//
+//		layers and highlighting features   	//
+//////////////////////////////////////////////
 
 // Used to highlight features. Style defines is highlight style
 function highlightFeature(e) {
 	var layer = e.target;
 	var featureType = layer.feature.properties.objType;
-//	console.log(layer);
 	if (featureType !== markerType && featureType !== historicType && featureType !== fireType) {
 		layer.setStyle({
 			opacity: 1,
@@ -293,6 +332,7 @@ function highlightFeature(e) {
 	info.update(e.target.feature.properties);
 }
 
+// Need to reset layer style when done highlighting (when mouse moves away)
 function resetHighlight(e) {
 	geoJson = getStyle(e);
 	if (geoJson === null) {
@@ -304,6 +344,7 @@ function resetHighlight(e) {
 	resetLevels(e);
 }
 
+// For layers with more than one color, reset to correct colors
 function resetLevels(e) {
 	if (e.target.feature.properties.objType === quickClayType) {
 		var levelColor = getDangerLevel(e.target.feature);
@@ -316,7 +357,6 @@ function resetLevels(e) {
 function getDangerLevel(feature) {
 	var level = feature.properties.risikoKl;
 	var type = feature.properties.objType;
-
 	if (type === quickClayType) {
 		return levels.quickClayLevels[level - 1];
 	}
@@ -330,9 +370,9 @@ function getStyle(e) {
 				onEachFeature: onEachFeature
 			});
 			break;
-		case fireType:
-			geoJson = L.geoJson(fireareas, {
-				style: fireStyle,
+		case dambreakType:
+			geoJson = L.geoJson(dambreaks, {
+				style: dambreakStyle,
 				onEachFeature: onEachFeature
 			});
 			break;
@@ -349,7 +389,11 @@ function getStyle(e) {
 	return geoJson;
 }
 
-// Info box when hovering
+
+//////////////////////////////////////////
+//		Info box and scroll button		//
+//////////////////////////////////////////
+
 var info = L.control({position: "bottomright"});
 
 info.onAdd = function (map) {
@@ -378,9 +422,6 @@ info.updateQuickClay = function (properties) {
 };
 
 info.addTo(map);
-
-// Attempting new control-thingy
-var maxer = L.control({position: "bottomleft"});
 
 L.easyButton('fa-comment',
 		function () {
