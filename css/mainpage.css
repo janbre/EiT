@@ -35,9 +35,13 @@ table {
 /*      BASE         */
 /*********************/
 body {
-  color: #787878;
-  font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-  line-height: 1.5;
+  	color: #787878;
+  	font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  	line-height: 1.5;
+}
+
+h1 {
+	padding-top: 40px;
 }
 
 /*********************/ 
@@ -57,6 +61,7 @@ section.module:last-child {
 
 section.module h2 {
 	margin-bottom: 40px;
+	margin-top: 40px;
 	font-family: 'Roboto Slab', serif;
 	font-size: 30px;
 }
@@ -70,14 +75,22 @@ div.container h3 {
 }
 
 div.container p {
-	margin-bottom: 20px;
+	margin-bottom: 40px;
+	padding-top: 40px;
 	padding-bottom: 20px;
 	font-size: 16px;
 	font-weight: 300;
+	max-width: 800px;
+	margin: 0 auto;
+}
+
+div.text {
+	max-width: 300px;
+	margin: 0 auto;
 }
 
 section.module p:last-child {
-	margin-bottom: 0;
+	margin-bottom: 40px;
 }
 
 section.module.content {
@@ -120,25 +133,30 @@ section.module.parallax-0 h2 {
 }
 
 section.module.parallax-0 {
-	background-image: url("../img/brygge1-crop.jpg");
+	background-image: url("../img/brygge5.jpg");
 	height: 800px;
 }
 
 section.module.parallax-1 {
-	background-image :url("../img/brygge2.jpg");
+	background-image: url("../img/gloshaugen.jpg");
 }
 
 section.module.parallax-2 {
-	background-image: url("../img/group-crop.jpg");
+	background-image: url("../img/storm.jpg");
 }
 
 section.module.parallax-3 {
+	background-image: url("../img/group-crop.jpg");
+}
+
+section.module.parallax-4 {
 	background-image: url("../img/discussion-crop.jpg");
 }
 
 @media all and (min-width: 600px) {
 	section.module h2 {
 		font-size: 42px;
+		text-align: center;
 	}
 	div.container p {
 		font-size: 20px;

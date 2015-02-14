@@ -89,75 +89,42 @@ var historicMarker = new HistoricIcon({iconUrl: "js/images/historic.png"});
 
 var mapLink = "<a href='http://openstreetmap.org'>OpenStreetMap contributors</a>";
 var mapquestLink = "<a href='http://www.mapquest.com/' target='_blank'>MapQuest</a>";
-var mapquestPic = "<img src='http://developer.mapquest.com/content/osm/mq_logo.png'>";
+var mapquestPic = "<img src='img/mq_logo.png'>";
 var mapLayer = L.tileLayer("http://{s}.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png", {
 		attribution: "&copy; " + mapLink + ". Tiles courtesy of "+mapquestLink + " - " + mapquestPic,
 		subdomains: ["otile1", "otile2", "otile3", "otile4"]
 });
 
 var historicLayer = L.geoJson(historic, {
-	filter: function (feature, layer) {
-		if (feature.properties) {
-			// If the property "underConstruction" exists and is true, return false (don't render features under construction)
-			return feature.properties.underConstruction !== undefined ? !feature.properties.underConstruction : true;
-		}
-		return false;
-	},
 	onEachFeature: onEachFeature
 });
 
 
 var fireLayer = L.geoJson(fireareas, {
-	filter: function (feature, layer) {
-		if (feature.properties) {
-			// If the property "underConstruction" exists and is true, return false (don't render features under construction)
-			return feature.properties.underConstruction !== undefined ? !feature.properties.underConstruction : true;
-		}
-		return false;
-	},
 	onEachFeature: onEachFeature
 });
 
 var floodLayer = L.geoJson(floodareas, {
 	style: floodStyle,
-	filter: function (feature, layer) {
-		if (feature.properties) {
-			return feature.properties.underConstruction !== undefined ? !feature.properties.underConstruction : true;
-		}
-		return false;
-	},
 	onEachFeature: onEachFeature
 });
 
 var dambreakLayer = L.geoJson(dambreaks, {
     style: dambreakStyle,
-    filter: function (feature, layer) {
-        if (feature.properties) {
-            return feature.properties.underConstruction !== undefined ? !feature.properties.underConstruction : true;
-        }
-        return false;
-    },
     onEachFeature: onEachFeature
 });
 
 var quickClayLayer = L.geoJson(quickClayAreas, {
 	style: quickClayStyle,
-	filter: function (feature, layer) {
-		if (feature.properties) {
-			return feature.properties.underConstruction !== undefined ? !feature.properties.underConstruction : true;
-		}
-		return false;
-	},
 	onEachFeature: onEachFeature
 });
-
 
 var markerLayer = L.geoJson(markers, {
     onEachFeature: onEachFeature
 });
 
 
-/// Create the map, center it on Trondheim and set zoom to 15 before adding layers
+/// Create the map, center it on Trondheim and set zoom to 13 before adding layers
 var map = L.map("map", {
 	center: [63.43387, 10.41384],
 	zoom: 13,
@@ -169,7 +136,7 @@ map.scrollWheelZoom.disable();
 // Can only have one basemap active at any time, but we only have one so let's comment it out
 // to get a cleaner interface
 var baseMaps = {
-	 "Normal": mapLayer
+//	 "Normal": mapLayer
 };
 
 // Can have multiple overlays and switch between them, let's add one for every category
@@ -307,7 +274,6 @@ function getFloodPopup(feature) {
 	var popupContent = "";
 	return "FLOOD!";
 }
-
 
 
 
