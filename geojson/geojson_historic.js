@@ -25,7 +25,7 @@ var historic = {
         "title": "Nordre Gate",
         "popupContent": "In 2002 there was a large fire in Nordre Gate",
         "img": "nordrebrann2002",
-        "source": ""
+        "source": "http://www.brannmannen.no/arkiv/2002.aspx?PID=51&M=NewsV2&Action=1&NewsId=1142"
       },
       "geometry": {
         "type": "Point",
