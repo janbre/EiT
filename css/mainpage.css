@@ -1,5 +1,6 @@
 html, body, section, h1 {
 	margin: 0;
+	height: 100%;
 	adding: 0;
 	border: 0;
 	font-size: 100%;
@@ -153,7 +154,7 @@ section.module.parallax-0 h2 {
 }
 
 section.module.parallax-0 {
-	background-image: url("../img/brygge5.jpg");
+	background-image: url("../img/brygge5-2.jpg");
 	height: 768px;
 }
 
